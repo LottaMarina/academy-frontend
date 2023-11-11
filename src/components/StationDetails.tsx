@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Journey, Station } from '../types/types';
 import { calculateAverageDistance, calculateAverageDuration } from '../utils/journeyUtils';
+import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 
 const StationDetails: React.FC = () => {
   const location = useLocation();
   const station: Station = location.state?.station;
   const [journeys, setJourneys] = useState<Journey[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchJourneys = async () => {
@@ -18,6 +20,8 @@ const StationDetails: React.FC = () => {
         }
       } catch (error) {
         console.error(`Error fetching journeys of station ${station?.id}:`, error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -27,20 +31,63 @@ const StationDetails: React.FC = () => {
   if (!station) {
     return (
       <div>
-        <p>No station details available.</p>
+        <div>
+          <p>No station details available.</p>
+        </div>
+        <div style={{ position: 'fixed', bottom: '0px', left: 0, width: '100%', backgroundColor: 'rgba(66, 245, 179, 0.2)', textAlign: 'center', padding: '16px' }}>
+          <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
+            <span style={{ marginRight: '8px' }}>&#8592;</span> Back to All Stations
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
-      <h2>Station Details</h2>
-      <p>Station name: {station.stationName}</p>
-      <p>Station address: {station.stationAddress}</p>
-      <p>Total amount of journeys starting from {station.stationName}: {journeys.filter((journey) => journey.departureStation.id === station.id).length}</p>
-      <p>Total amount of journeys ending in {station.stationName}: {journeys.filter((journey) => journey.returnStation.id === station.id).length}</p>
-      <p>Average distance of journeys starting from {station.stationName}: {calculateAverageDistance(journeys, station)} </p>
-      <p>Avarage duration of journeys starting from {station.stationName}: {calculateAverageDuration(journeys, station)}</p>
+    <div style={{ position: 'relative', minHeight: '100vh', padding: '16px 16px', paddingRight: '16px'}}>
+      <Typography variant="h2" style={{ paddingLeft: '16px', fontSize: '24px', color: 'black', margin: '16px', textDecoration: 'underline', textDecorationColor:'rgba(66, 245, 179, 0.5)'}} component="div">
+        Station Details
+      </Typography>
+      
+      {loading ? (
+        <CircularProgress style={{ marginLeft: '50%', marginTop: '50px', color: 'rgba(66, 245, 179, 0.4)' }} />
+      ) : (
+        <TableContainer component={Paper} style={{ paddingLeft: '16px', boxShadow: 'none' }}>
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell>Station name</TableCell>
+                <TableCell>{station.stationName}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Station address</TableCell>
+                <TableCell>{station.stationAddress}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Total journeys starting from {station.stationName}</TableCell>
+                <TableCell>{journeys.filter((journey) => journey.departureStation.id === station.id).length}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Total journeys ending in {station.stationName}</TableCell>
+                <TableCell>{journeys.filter((journey) => journey.returnStation.id === station.id).length}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Average distance of journeys starting from {station.stationName}</TableCell>
+                <TableCell>{calculateAverageDistance(journeys, station)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Average duration of journeys starting from {station.stationName}</TableCell>
+                <TableCell>{calculateAverageDuration(journeys, station)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+      <div style={{ position: 'fixed', bottom: '0px', left: 0, width: '100%', backgroundColor: 'rgba(66, 245, 179, 0.2)', textAlign: 'center', padding: '16px' }}>
+        <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
+          <span style={{ marginRight: '8px' }}>&#8592;</span> Back to All Stations
+        </Link>
+      </div>
     </div>
   );
 };
