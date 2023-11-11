@@ -1,14 +1,15 @@
 import React from 'react';
-import logo from './bike.svg';
-import './App.css';
-import StationsList from './component/StationList';
+import { Route, Routes } from 'react-router-dom';
+import StationList from './components/StationList';
+import StationDetails from './components/StationDetails';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <StationsList></StationsList>
-    </div>
+    <Routes>
+      <Route path="/" element={<StationList />} />
+      <Route path="/stations/:stationId" element={<StationDetails />} />
+    </Routes>
   );
-}
+};
 
 export default App;
