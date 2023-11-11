@@ -2,6 +2,8 @@
 
 This is the frontend application for the pre-assignment for Solita Dev Academy Finland January 2024.
 
+The assignment can be found here: https://github.com/solita/dev-academy-spring-2024-exercise
+
 ## Getting Started
 
 ### Prerequisites
